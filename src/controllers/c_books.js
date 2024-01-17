@@ -138,8 +138,8 @@ const updateBook = async (req, res) => {
 
         try {
           if (file) {
-            const book_image = findBook._doc.image.url;
-            const book_cloudinary_id = findBook._doc.image.cloudinary_id;
+            const book_image = findBook._doc.book_image.url;
+            const book_cloudinary_id = findBook._doc.book_image.cloudinary_id;
 
             // delete exist image
             if (book_image)
