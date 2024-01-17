@@ -114,7 +114,7 @@ const updateBook = async (req, res) => {
   const file = req.file;
 
   const rules = {
-    book_name: "regex:/^[a-zA-Z0-9 ]*$/|max:24", // Regex alphanumeric and spaces only
+    book_name: "regex:/^[a-zA-Z0-9 ]*$/|max:30", // Regex alphanumeric and spaces only
     book_content: {
       author: "max:24|string",
       description: "max:1000",
