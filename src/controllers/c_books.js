@@ -157,7 +157,7 @@ const updateBook = async (req, res) => {
           payload = {
             ...body,
             ...payload,
-            book_name: body.name?.trim(),
+            book_name: body.book_name?.trim(),
           };
 
           const newData = await ModelBooks.findByIdAndUpdate(
