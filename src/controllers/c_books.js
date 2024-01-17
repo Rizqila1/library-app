@@ -114,12 +114,13 @@ const updateBook = async (req, res) => {
   const file = req.file;
 
   const rules = {
-    book_name: "regex:/^[a-zA-Z0-9 ]*$/|max:30", // Regex alphanumeric and spaces only
+    book_name: "required|regex:/^[a-zA-Z0-9 ]*$/|max:30", // Regex alphanumeric and spaces only
     book_content: {
-      author: "max:24|string",
-      description: "max:1000",
+      author: "required|max:24|string",
+      description: "required|max:1000",
+      content: "required",
     },
-    stock: "numeric",
+    stock: "required|numeric",
   };
 
   try {
@@ -154,25 +155,9 @@ const updateBook = async (req, res) => {
             };
           }
 
-          const isUpdateAuthor = body.book_content.author;
-          const isUpdateDesctiprion = body.book_content.description;
-          const isUpdateContent = body.book_content.content;
-
           payload = {
             ...payload,
             ...body,
-
-            book_content: {
-              author: isUpdateAuthor
-                ? isUpdateAuthor
-                : findBook.book_content.author,
-              description: isUpdateDesctiprion
-                ? isUpdateDesctiprion
-                : findBook.book_content.description,
-              author: isUpdateContent
-                ? isUpdateContent
-                : findBook.book_content.content,
-            },
 
             book_name: body.book_name?.trim(),
           };
