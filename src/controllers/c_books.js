@@ -154,9 +154,24 @@ const updateBook = async (req, res) => {
             };
           }
 
+          const isExistAuthor = findBook.book_content.author;
+          const isExistDescription = findBook.book_content.description;
+          const isExistContent = findBook.book_content.content;
+
           payload = {
             ...payload,
             ...body,
+
+            book_content: {
+              author: isExistAuthor ? isExistAuthor : body.book_content.author,
+              description: isExistDescription
+                ? isExistDescription
+                : body.book_content.description,
+              content: isExistContent
+                ? isExistContent
+                : body.book_content.content,
+            },
+
             book_name: body.book_name?.trim(),
           };
 
