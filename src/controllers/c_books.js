@@ -155,16 +155,14 @@ const updateBook = async (req, res) => {
           }
 
           payload = {
-            ...body,
             ...payload,
+            ...body,
             book_name: body.book_name?.trim(),
           };
 
-          const newData = await ModelBooks.findByIdAndUpdate(
-            id,
-            { ...payload },
-            { new: true }
-          );
+          const newData = await ModelBooks.findByIdAndUpdate(id, payload, {
+            new: true,
+          });
 
           Messages(res, 200, "Update book success", newData);
         } catch (error) {
