@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { SECRET_KEY_JWT } from "./secret.js";
 import Messages from "../utils/messages.js";
 import ModelTokens from "../models/m_tokens.js";
+import ModelUsers from "../models/m_users.js";
 
 const authentication = (req, res, next) => {
   const authorization = req.headers.authorization;
@@ -42,9 +43,14 @@ const authentication = (req, res, next) => {
     const dataToken = { ...res.token };
     const UUID_token = dataToken.id_token;
     const isValidToken = await ModelTokens.findOne({ UUID_token: UUID_token });
-
     if (isValidToken?.revoke === 1)
       return Messages(res, 403, "Token is no longer valid");
+
+    const dataUser = { ...res.user };
+    const idUser = dataUser._id;
+    const isUserActive = await ModelUsers.findById(idUser);
+    if (isUserActive.isActive === 0)
+      return Messages(res, 403, "Your account is deactivated");
 
     next();
   });
