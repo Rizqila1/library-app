@@ -89,12 +89,24 @@ const ForceLogoutSignedUser = async (req, res) => {
 
 const ForceLogoutAllSignedUser = async (req, res) => {
   try {
-    const findDataTokens = await ModelTokens.find({ revoke: 0 }).exec();
-    if (!findDataTokens) return Messages(res, 404, `There's no logged user`);
+    const findUser = await ModelUsers.find({ "role.name": "user" });
+    const filteredIdUsers = findUser.map((item) => item._id);
+
+    const findDataTokens = await ModelTokens.find({
+      revoke: 0,
+      user_id: { $in: filteredIdUsers },
+    });
+    if (!findDataTokens.length)
+      return Messages(res, 404, `There's no logged user`);
+
+    const findAdmins = await ModelUsers.find()
+      .where("role.name")
+      .in(["manager", "admin"]);
+    const filteredIdAdmins = findAdmins.map((item) => item._id);
 
     const updateDataTokens = findDataTokens.map(async (item) => {
       const result = await ModelTokens.updateOne(
-        { _id: item._id },
+        { _id: item._id, user_id: { $nin: filteredIdAdmins } },
         {
           revoke: 1,
           // token: null,
@@ -105,8 +117,10 @@ const ForceLogoutAllSignedUser = async (req, res) => {
     });
 
     const findDataUsers = await ModelUsers.find({
-      token: { $ne: null }, // $ne (not equal) will find value that not equal with the specified value
+      token: { $ne: null }, // $ne (not equal) will find doc that not equal with the specified value
+      _id: { $nin: filteredIdAdmins }, // $nin (not in) will find doc that not in specified array (filteredIdUser)
     }).exec();
+
     const updateDataUsers = findDataUsers.map(async (item) => {
       const result = await ModelUsers.updateOne(
         { _id: item._id },
