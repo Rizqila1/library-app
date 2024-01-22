@@ -317,6 +317,11 @@ const deactivateUser = async (req, res) => {
     if (findUser.isActive === 0)
       Messages(res, 412, "User is already in non-active status");
 
+    // revoke token: force logout
+    const payloadToken = { revoke: 1 };
+    await ModelTokens.updateMany({ user_id: id }, payloadToken, { new: true });
+
+    // deactivate
     await ModelUsers.updateOne({ _id: id }, { isActive: 0 }, { new: true });
     Messages(
       res,
