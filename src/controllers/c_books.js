@@ -1,4 +1,5 @@
 import ModelBooks from "../models/m_books.js";
+import ModelCategories from "../models/m_categories.js";
 import Cloudinary from "../config/cloudinary.js";
 import Messages from "../utils/messages.js";
 import isValidator from "../utils/validator.js";
@@ -9,6 +10,7 @@ const addBook = async (req, res) => {
 
   const rules = {
     book_name: "required|regex:/^[a-zA-Z0-9 ]*$/|max:30", // Regex alphanumeric and spaces only
+    category_id: "required|alpha_num",
     book_content: {
       author: "required|max:24|string",
       description: "required|max:1000",
@@ -30,6 +32,9 @@ const addBook = async (req, res) => {
         if (!status) return Messages(res, 412, { ...err, status });
 
         try {
+          const findCategory = await ModelCategories.findById(body.category_id);
+          if (!findCategory) return Messages(res, 404, "Category not found");
+
           // upload image to cloudinary
           const result = await Cloudinary.uploader.upload(file.path);
 
@@ -38,6 +43,10 @@ const addBook = async (req, res) => {
             ...body,
 
             book_name: body.book_name.trim(),
+            category: {
+              _id: findCategory._id,
+              category_name: findCategory.category_name,
+            },
             book_image: {
               url: result.secure_url,
               cloudinary_id: result.public_id,
@@ -115,6 +124,7 @@ const updateBook = async (req, res) => {
 
   const rules = {
     book_name: "required|regex:/^[a-zA-Z0-9 ]*$/|max:30", // Regex alphanumeric and spaces only
+    category_id: "required|alpha_num",
     book_content: {
       author: "required|max:24|string",
       description: "required|max:1000",
@@ -137,6 +147,9 @@ const updateBook = async (req, res) => {
         let payload = {};
 
         try {
+          const findCategory = await ModelCategories.findById(body.category_id);
+          if (!findCategory) return Messages(res, 404, "Category not found");
+
           if (file) {
             const book_image = findBook._doc.book_image.url;
             const book_cloudinary_id = findBook._doc.book_image.cloudinary_id;
@@ -158,8 +171,11 @@ const updateBook = async (req, res) => {
           payload = {
             ...payload,
             ...body,
-
             book_name: body.book_name?.trim(),
+            category: {
+              _id: findCategory._id,
+              category_name: findCategory.category_name,
+            },
           };
 
           const newData = await ModelBooks.findByIdAndUpdate(id, payload, {
