@@ -70,6 +70,7 @@ const addBook = async (req, res) => {
 
 const getAllDataBooks = async (req, res) => {
   const q = req.query.q ? req.query.q : "";
+  const q2 = req.query.category_id;
 
   const sort_by = req.query.sort_by ? req.query.sort_by.toLowerCase() : "desc";
   const sort_key = sort_by === "asc" ? 1 : -1;
@@ -80,7 +81,10 @@ const getAllDataBooks = async (req, res) => {
   const pages = page === 1 ? 0 : (page - 1) * per_page;
 
   try {
-    const filter = { book_name: { $regex: q, $options: "i" } };
+    const filter = {
+      book_name: { $regex: q, $options: "i" },
+      "category._id": q2 ? { $eq: q2 } : { $exists: true },
+    };
 
     const total = await ModelBooks.countDocuments(filter);
     const data = await ModelBooks.find(filter)
