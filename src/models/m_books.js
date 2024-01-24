@@ -12,6 +12,10 @@ const schemaOptions = {
 const BooksSchema = new Schema(
   {
     book_name: String,
+    category: {
+      _id: String,
+      category_name: String,
+    },
     book_content: {
       author: String,
       description: String,
