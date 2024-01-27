@@ -92,17 +92,11 @@ const getAllDataBooks = async (req, res) => {
       .skip(pages)
       .limit(per_page);
 
-    Messages(
-      res,
-      200,
-      "All Data",
-      { ...data },
-      {
-        page,
-        per_page,
-        total,
-      }
-    );
+    Messages(res, 200, "All Data", data, {
+      page,
+      per_page,
+      total,
+    });
   } catch (error) {
     Messages(res, 500, error?.message || "Internal server error");
   }
