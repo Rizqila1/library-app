@@ -176,9 +176,11 @@ const updateBook = async (req, res) => {
             },
           };
 
-          const newData = await ModelBooks.findByIdAndUpdate(id, payload, {
-            new: true,
-          });
+          const newData = await ModelBooks.findByIdAndUpdate(
+            id,
+            { ...payload },
+            { new: true }
+          );
 
           Messages(res, 200, "Update book success", newData);
         } catch (error) {
