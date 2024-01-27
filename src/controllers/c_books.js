@@ -160,7 +160,7 @@ const updateBook = async (req, res) => {
             const result = await Cloudinary.uploader.upload(file.path);
 
             // assign data secure_url and public_id to key image
-            payload.image = {
+            payload.book_image = {
               url: result.secure_url,
               cloudinary_id: result.public_id,
             };
