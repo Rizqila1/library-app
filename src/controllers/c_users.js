@@ -59,7 +59,7 @@ const registerUser = async (req, res) => {
   const rules = {
     full_name: "required|regex:/^[a-zA-Z ]*$/|min:3|max:24", // Regex alphabet and spaces only
     email: "required|email",
-    password: "required|min:8|max:16|alpha_num",
+    password: "required|min:8|max:16",
   };
 
   await isValidator(
