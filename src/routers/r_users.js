@@ -20,7 +20,7 @@ Router.get("/users", authentication, admin, GetAllDataUsers);
 Router.post("/users/register", registerUser);
 Router.post("/users/login", loginUser);
 Router.post("/users/logout", authentication, logoutUser);
-Router.get("/users/details/:id", authentication, admin, detailUser);
+Router.get("/users/details/:id", authentication, user, detailUser);
 Router.put("/users/update/:id", authentication, user, uploadImg, updateUser);
 Router.put("/users/activate/:id", authentication, admin, activateUser);
 Router.put("/users/deactivate/:id", authentication, admin, deactivateUser);
